@@ -35,8 +35,8 @@ class ProjectList(generics.ListCreateAPIView):
     pagination_class = None
     permission_classes = (IsAuthenticated, IsAdminUserAndWriteOnly)
 
-    def get_queryset(self):
-        return self.request.user.projects
+    # def get_queryset(self):
+    #     return self.request.user.projects
 
     def perform_create(self, serializer):
         serializer.save(users=[self.request.user])
@@ -88,7 +88,7 @@ class LabelList(generics.ListCreateAPIView):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     pagination_class = None
-    permission_classes = (IsAuthenticated, IsProjectUser, IsAdminUserAndWriteOnly)
+    permission_classes = (IsAuthenticated, IsAdminUserAndWriteOnly)
 
     def get_queryset(self):
         queryset = self.queryset.filter(project=self.kwargs['project_id'])
@@ -103,7 +103,7 @@ class LabelDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
     lookup_url_kwarg = 'label_id'
-    permission_classes = (IsAuthenticated, IsProjectUser, IsAdminUserAndWriteOnly)
+    permission_classes = (IsAuthenticated, IsAdminUserAndWriteOnly)
 
 
 class DocumentList(generics.ListCreateAPIView):
@@ -114,7 +114,7 @@ class DocumentList(generics.ListCreateAPIView):
     ordering_fields = ('created_at', 'updated_at', 'doc_annotations__updated_at',
                        'seq_annotations__updated_at', 'seq2seq_annotations__updated_at')
     filter_class = DocumentFilter
-    permission_classes = (IsAuthenticated, IsProjectUser, IsAdminUserAndWriteOnly)
+    permission_classes = (IsAuthenticated, IsAdminUserAndWriteOnly)
 
     def get_queryset(self):
         queryset = self.queryset.filter(project=self.kwargs['project_id'])
@@ -134,7 +134,7 @@ class DocumentDetail(generics.RetrieveUpdateDestroyAPIView):
 
 class AnnotationList(generics.ListCreateAPIView):
     pagination_class = None
-    permission_classes = (IsAuthenticated, IsProjectUser)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         project = get_object_or_404(Project, pk=self.kwargs['project_id'])
@@ -159,7 +159,7 @@ class AnnotationList(generics.ListCreateAPIView):
 
 class AnnotationDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_url_kwarg = 'annotation_id'
-    permission_classes = (IsAuthenticated, IsProjectUser, IsOwnAnnotation)
+    permission_classes = (IsAuthenticated,)
 
     def get_serializer_class(self):
         project = get_object_or_404(Project, pk=self.kwargs['project_id'])
