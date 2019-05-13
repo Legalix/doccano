@@ -35,16 +35,16 @@ def upload_labels(destination_project_id: int, csv_filename: str):
     """
     with open(csv_filename) as csv_file:
         reader = csv.DictReader(csv_file)
-        created_labels = (
+        created_labels = [
             create_label(
                 **{
                     column_name: getter(row)
                     for column_name, getter in CSV_HEADER_MAP.items()
                 }
             ) for row in reader
-        )
+        ]
 
-    print(created_labels)
+    print_labels(created_labels)
 
 
 def copy_labels(source_project_id: int, destination_project_id: int):
@@ -59,4 +59,4 @@ def copy_labels(source_project_id: int, destination_project_id: int):
         item['project_id'] = destination_project_id
         created_labels.append(create_label(**item))
 
-    print(created_labels)
+    print_labels(created_labels)
