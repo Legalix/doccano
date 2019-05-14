@@ -122,11 +122,15 @@ class DocumentAnnotationSerializer(serializers.ModelSerializer):
     # label = ProjectFilteredPrimaryKeyRelatedField(queryset=Label.objects.all())
     label = serializers.PrimaryKeyRelatedField(queryset=Label.objects.all())
     document = serializers.PrimaryKeyRelatedField(queryset=Document.objects.all())
+    label_text = serializers.SerializerMethodField()
 
     class Meta:
         model = DocumentAnnotation
-        fields = ('id', 'prob', 'label', 'user', 'document')
+        fields = ('id', 'prob', 'label', 'user', 'label_text', 'document')
         read_only_fields = ('user', )
+
+    def get_label_text(self, instance):
+        return instance.label.text
 
 
 class SequenceAnnotationSerializer(serializers.ModelSerializer):
