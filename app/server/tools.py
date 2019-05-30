@@ -1,9 +1,9 @@
 import csv
 
-from models import Label
+from server.models import Label
 
 
-CSV_HEADER_MAP = {
+LABEL_COLUMN_MAP = {
     'project_id': lambda x: int(x['Project']),
     'text': lambda x: x['Etiqueta'],
     'prefix_key': lambda x: x['Prefix key'],
@@ -39,7 +39,7 @@ def upload_labels(destination_project_id: int, csv_filename: str):
             create_label(
                 **{
                     column_name: getter(row)
-                    for column_name, getter in CSV_HEADER_MAP.items()
+                    for column_name, getter in LABEL_COLUMN_MAP.items()
                 }
             ) for row in reader
         ]
@@ -53,8 +53,8 @@ def copy_labels(source_project_id: int, destination_project_id: int):
     created_labels = []
     for label in Label.objects.filter(project_id=source_project_id).iterator():
         item = {
-            field: getattr(label.field)
-            for field in CSV_HEADER_MAP
+            field: getattr(label, field)
+            for field in LABEL_COLUMN_MAP
         }
         item['project_id'] = destination_project_id
         created_labels.append(create_label(**item))
